@@ -76,7 +76,7 @@ function SnakePage() {
           <div className="space-y-4">
             <ScorePanel score={g.score} highScore={g.highScore} elapsed={g.elapsed} />
             <div className="relative">
-              <GameBoard snake={g.snake} food={g.food} ateTick={g.ateTick} overlay={overlay} />
+              <GameBoard snake={g.snake} food={g.food} ateTick={g.ateTick} overlay={overlay} onSwipe={g.changeDirection} />
             </div>
 
             {/* Action buttons */}
