@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { BOARD_SIZE, type Direction, type Point } from "@/lib/snake/types";
 
 interface Props {
@@ -10,28 +10,65 @@ interface Props {
 }
 
 function GameBoardImpl({ snake, food, ateTick, overlay, onSwipe }: Props) {
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const t = e.touches[0];
-    touchStart.current = { x: t.clientX, y: t.clientY };
-  };
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStart.current) e.preventDefault();
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const start = touchStart.current;
-    touchStart.current = null;
-    if (!start || !onSwipe) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - start.x;
-    const dy = t.clientY - start.y;
-    const absX = Math.abs(dx);
-    const absY = Math.abs(dy);
-    if (Math.max(absX, absY) < 20) return;
-    if (absX > absY) onSwipe(dx > 0 ? "RIGHT" : "LEFT");
-    else onSwipe(dy > 0 ? "DOWN" : "UP");
-  };
+  useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+
+    const onStart = (e: TouchEvent) => {
+      // Prevent multi-touch pinch/zoom while interacting with the board
+      if (e.touches.length > 1) {
+        e.preventDefault();
+        touchStart.current = null;
+        return;
+      }
+      const t = e.touches[0];
+      touchStart.current = { x: t.clientX, y: t.clientY };
+      e.preventDefault();
+    };
+    const onMove = (e: TouchEvent) => {
+      // Always block scroll/zoom while touching the board
+      e.preventDefault();
+    };
+    const onEnd = (e: TouchEvent) => {
+      const start = touchStart.current;
+      touchStart.current = null;
+      if (!start || !onSwipe) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - start.x;
+      const dy = t.clientY - start.y;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+      if (Math.max(absX, absY) < 20) return;
+      if (absX > absY) onSwipe(dx > 0 ? "RIGHT" : "LEFT");
+      else onSwipe(dy > 0 ? "DOWN" : "UP");
+      e.preventDefault();
+    };
+    const onGesture = (e: Event) => e.preventDefault();
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd, { passive: false });
+    el.addEventListener("touchcancel", onEnd, { passive: false });
+    // iOS Safari pinch/zoom gesture events
+    el.addEventListener("gesturestart", onGesture as EventListener);
+    el.addEventListener("gesturechange", onGesture as EventListener);
+    el.addEventListener("gestureend", onGesture as EventListener);
+
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+      el.removeEventListener("gesturestart", onGesture as EventListener);
+      el.removeEventListener("gesturechange", onGesture as EventListener);
+      el.removeEventListener("gestureend", onGesture as EventListener);
+    };
+  }, [onSwipe]);
+
+
   const cellPct = 100 / BOARD_SIZE;
   const headKey = `${snake[0].x},${snake[0].y}`;
   const bodySet = new Set(snake.slice(1).map((s) => `${s.x},${s.y}`));
