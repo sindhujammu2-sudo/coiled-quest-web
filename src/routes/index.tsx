@@ -1,22 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Gamepad2, Info } from "lucide-react";
+import { Play, Pause, RotateCcw, Gamepad2, Info } from "lucide-react";
 import { useSnakeGame } from "@/hooks/useSnakeGame";
 import { GameBoard } from "@/components/snake/GameBoard";
 import { ScorePanel } from "@/components/snake/ScorePanel";
 import { TouchControls } from "@/components/snake/TouchControls";
 import { GameOverModal } from "@/components/snake/GameOverModal";
-import type { Difficulty } from "@/lib/snake/types";
+import { SettingsPanel } from "@/components/snake/SettingsPanel";
 
 export const Route = createFileRoute("/")({
   component: SnakePage,
 });
 
-const DIFFICULTIES: { id: Difficulty; label: string }[] = [
-  { id: "easy", label: "Easy" },
-  { id: "medium", label: "Medium" },
-  { id: "hard", label: "Hard" },
-];
 
 function SnakePage() {
   const g = useSnakeGame();
@@ -75,13 +70,6 @@ function SnakePage() {
               <p className="hidden sm:block text-xs text-muted-foreground">Classic snake, modern feel.</p>
             </div>
           </div>
-          <button
-            onClick={() => g.setSoundOn(!g.soundOn)}
-            aria-label={g.soundOn ? "Mute sound" : "Unmute sound"}
-            className="glass rounded-xl h-10 w-10 grid place-items-center hover:bg-primary/10 transition-colors"
-          >
-            {g.soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          </button>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -126,29 +114,16 @@ function SnakePage() {
 
           {/* Sidebar */}
           <aside className="space-y-4">
-            <div className="glass rounded-2xl p-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Difficulty</h2>
-              <div className="grid grid-cols-3 gap-2">
-                {DIFFICULTIES.map((d) => {
-                  const active = g.difficulty === d.id;
-                  return (
-                    <button
-                      key={d.id}
-                      onClick={() => g.setDifficulty(d.id)}
-                      className={
-                        "rounded-xl px-3 py-2 text-sm font-semibold transition-all active:scale-95 " +
-                        (active
-                          ? "gradient-primary text-primary-foreground glow-primary"
-                          : "glass hover:bg-primary/10")
-                      }
-                    >
-                      {d.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-3 text-xs text-muted-foreground">Speed changes take effect on the next game.</p>
-            </div>
+            <SettingsPanel
+              difficulty={g.difficulty}
+              onDifficulty={g.setDifficulty}
+              sfxOn={g.sfxOn}
+              onSfx={g.setSfxOn}
+              musicOn={g.musicOn}
+              onMusic={g.setMusicOn}
+              volume={g.volume}
+              onVolume={g.setVolume}
+            />
 
             <div className="glass rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-3">

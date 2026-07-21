@@ -9,9 +9,17 @@ import {
   type GameStatus,
   type Point,
 } from "@/lib/snake/types";
-import { sfx, startMusic, stopMusic } from "@/lib/snake/sounds";
+import {
+  sfx,
+  startMusic,
+  stopMusic,
+  setVolume as setAudioVolume,
+  setSfxEnabled,
+  setMusicEnabled,
+} from "@/lib/snake/sounds";
 
 const HIGH_SCORE_KEY = "snake:highScore";
+const SETTINGS_KEY = "snake:settings";
 
 function centerSnake(): Point[] {
   const c = Math.floor(BOARD_SIZE / 2);
@@ -41,7 +49,9 @@ export function useSnakeGame() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
-  const [soundOn, setSoundOn] = useState(true);
+  const [sfxOn, setSfxOn] = useState(true);
+  const [musicOn, setMusicOn] = useState(true);
+  const [volume, setVolume] = useState(0.8);
   const [elapsed, setElapsed] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const [ateTick, setAteTick] = useState(0);
@@ -52,28 +62,53 @@ export function useSnakeGame() {
   const statusRef = useRef(status);
   const snakeRef = useRef(snake);
   const foodRef = useRef(food);
-  const soundOnRef = useRef(soundOn);
+  const sfxOnRef = useRef(sfxOn);
 
   useEffect(() => { directionRef.current = direction; }, [direction]);
   useEffect(() => { statusRef.current = status; }, [status]);
   useEffect(() => { snakeRef.current = snake; }, [snake]);
   useEffect(() => { foodRef.current = food; }, [food]);
-  useEffect(() => { soundOnRef.current = soundOn; }, [soundOn]);
+  useEffect(() => { sfxOnRef.current = sfxOn; }, [sfxOn]);
 
-  // Load high score from local storage
+  // Load high score + persisted settings
   useEffect(() => {
     try {
       const v = localStorage.getItem(HIGH_SCORE_KEY);
       if (v) setHighScore(parseInt(v, 10) || 0);
+      const s = localStorage.getItem(SETTINGS_KEY);
+      if (s) {
+        const p = JSON.parse(s) as Partial<{
+          difficulty: Difficulty; sfxOn: boolean; musicOn: boolean; volume: number;
+        }>;
+        if (p.difficulty) setDifficulty(p.difficulty);
+        if (typeof p.sfxOn === "boolean") setSfxOn(p.sfxOn);
+        if (typeof p.musicOn === "boolean") setMusicOn(p.musicOn);
+        if (typeof p.volume === "number") setVolume(p.volume);
+      }
     } catch {}
   }, []);
 
-  // Music toggle
+  // Persist settings
   useEffect(() => {
-    if (soundOn && status === "playing") startMusic();
+    try {
+      localStorage.setItem(
+        SETTINGS_KEY,
+        JSON.stringify({ difficulty, sfxOn, musicOn, volume }),
+      );
+    } catch {}
+  }, [difficulty, sfxOn, musicOn, volume]);
+
+  // Push audio settings to engine live (no restart needed)
+  useEffect(() => { setAudioVolume(volume); }, [volume]);
+  useEffect(() => { setSfxEnabled(sfxOn); }, [sfxOn]);
+  useEffect(() => { setMusicEnabled(musicOn); }, [musicOn]);
+
+  // Music playback bound to game state (music gain handles the mute)
+  useEffect(() => {
+    if (status === "playing") startMusic();
     else stopMusic();
     return () => stopMusic();
-  }, [soundOn, status]);
+  }, [status]);
 
   // Elapsed timer
   useEffect(() => {
@@ -122,14 +157,14 @@ export function useSnakeGame() {
       setScore((s) => s + 1);
       setFood(randomFood(nextSnake));
       setAteTick((t) => t + 1);
-      if (soundOnRef.current) sfx.eat();
+      if (sfxOnRef.current) sfx.eat();
     }
   }, []);
 
   const endGame = useCallback(() => {
     statusRef.current = "gameover";
     setStatus("gameover");
-    if (soundOnRef.current) sfx.gameOver();
+    if (sfxOnRef.current) sfx.gameOver();
     stopMusic();
     setScore((s) => {
       setHighScore((hi) => {
@@ -168,10 +203,10 @@ export function useSnakeGame() {
     if (status !== "countdown") return;
     if (countdown <= 0) {
       setStatus("playing");
-      if (soundOnRef.current) sfx.start();
+      if (sfxOnRef.current) sfx.start();
       return;
     }
-    if (soundOnRef.current) sfx.tick();
+    if (sfxOnRef.current) sfx.tick();
     const id = setTimeout(() => setCountdown((c) => c - 1), 800);
     return () => clearTimeout(id);
   }, [status, countdown]);
@@ -202,8 +237,8 @@ export function useSnakeGame() {
 
   return {
     snake, food, direction, status, score, highScore, difficulty,
-    soundOn, elapsed, countdown, ateTick,
-    setDifficulty, setSoundOn,
+    sfxOn, musicOn, volume, elapsed, countdown, ateTick,
+    setDifficulty, setSfxOn, setMusicOn, setVolume,
     start: beginCountdown, togglePause, restart, changeDirection,
   };
 }
