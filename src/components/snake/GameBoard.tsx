@@ -1,28 +1,54 @@
-import { memo } from "react";
-import { BOARD_SIZE, type Point } from "@/lib/snake/types";
+import { memo, useRef } from "react";
+import { BOARD_SIZE, type Direction, type Point } from "@/lib/snake/types";
 
 interface Props {
   snake: Point[];
   food: Point;
   ateTick: number;
   overlay?: React.ReactNode;
+  onSwipe?: (dir: Direction) => void;
 }
 
-function GameBoardImpl({ snake, food, ateTick, overlay }: Props) {
+function GameBoardImpl({ snake, food, ateTick, overlay, onSwipe }: Props) {
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStart.current) e.preventDefault();
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start || !onSwipe) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    if (Math.max(absX, absY) < 20) return;
+    if (absX > absY) onSwipe(dx > 0 ? "RIGHT" : "LEFT");
+    else onSwipe(dy > 0 ? "DOWN" : "UP");
+  };
   const cellPct = 100 / BOARD_SIZE;
   const headKey = `${snake[0].x},${snake[0].y}`;
   const bodySet = new Set(snake.slice(1).map((s) => `${s.x},${s.y}`));
 
   return (
     <div
-      className="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl glass overflow-hidden glow-primary"
+      className="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl glass overflow-hidden glow-primary touch-none select-none"
       style={{
         backgroundImage:
           `linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px)`,
         backgroundSize: `${cellPct}% ${cellPct}%`,
       }}
       role="img"
-      aria-label="Snake game board"
+      aria-label="Snake game board. Swipe to change direction."
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Food */}
       <div

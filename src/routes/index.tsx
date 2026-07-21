@@ -4,7 +4,6 @@ import { Play, Pause, RotateCcw, Gamepad2, Info } from "lucide-react";
 import { useSnakeGame } from "@/hooks/useSnakeGame";
 import { GameBoard } from "@/components/snake/GameBoard";
 import { ScorePanel } from "@/components/snake/ScorePanel";
-import { TouchControls } from "@/components/snake/TouchControls";
 import { GameOverModal } from "@/components/snake/GameOverModal";
 import { SettingsPanel } from "@/components/snake/SettingsPanel";
 
@@ -77,7 +76,7 @@ function SnakePage() {
           <div className="space-y-4">
             <ScorePanel score={g.score} highScore={g.highScore} elapsed={g.elapsed} />
             <div className="relative">
-              <GameBoard snake={g.snake} food={g.food} ateTick={g.ateTick} overlay={overlay} />
+              <GameBoard snake={g.snake} food={g.food} ateTick={g.ateTick} overlay={overlay} onSwipe={g.changeDirection} />
             </div>
 
             {/* Action buttons */}
@@ -106,10 +105,10 @@ function SnakePage() {
               </button>
             </div>
 
-            {/* Touch controls on mobile */}
-            <div className="lg:hidden pt-2">
-              <TouchControls onDirection={g.changeDirection} />
-            </div>
+            {/* Swipe on the board to change direction on touch devices */}
+            <p className="lg:hidden text-center text-xs text-muted-foreground pt-1">
+              Swipe up, down, left, or right on the board to steer.
+            </p>
           </div>
 
           {/* Sidebar */}
