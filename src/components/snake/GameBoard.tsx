@@ -75,18 +75,20 @@ function GameBoardImpl({ snake, food, ateTick, overlay, onSwipe }: Props) {
 
   return (
     <div
-      className="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl glass overflow-hidden glow-primary touch-none select-none"
+      ref={boardRef}
+      className="relative aspect-square w-full max-w-[560px] mx-auto rounded-2xl glass overflow-hidden glow-primary touch-none select-none overscroll-contain"
       style={{
         backgroundImage:
           `linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px)`,
         backgroundSize: `${cellPct}% ${cellPct}%`,
+        touchAction: "none",
+        WebkitUserSelect: "none",
+        WebkitTouchCallout: "none",
       }}
       role="img"
       aria-label="Snake game board. Swipe to change direction."
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
+
       {/* Food */}
       <div
         key={`food-${food.x}-${food.y}`}
