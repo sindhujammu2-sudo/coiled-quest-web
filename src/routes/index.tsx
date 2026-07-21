@@ -120,29 +120,16 @@ function SnakePage() {
 
           {/* Sidebar */}
           <aside className="space-y-4">
-            <div className="glass rounded-2xl p-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Difficulty</h2>
-              <div className="grid grid-cols-3 gap-2">
-                {DIFFICULTIES.map((d) => {
-                  const active = g.difficulty === d.id;
-                  return (
-                    <button
-                      key={d.id}
-                      onClick={() => g.setDifficulty(d.id)}
-                      className={
-                        "rounded-xl px-3 py-2 text-sm font-semibold transition-all active:scale-95 " +
-                        (active
-                          ? "gradient-primary text-primary-foreground glow-primary"
-                          : "glass hover:bg-primary/10")
-                      }
-                    >
-                      {d.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-3 text-xs text-muted-foreground">Speed changes take effect on the next game.</p>
-            </div>
+            <SettingsPanel
+              difficulty={g.difficulty}
+              onDifficulty={g.setDifficulty}
+              sfxOn={g.sfxOn}
+              onSfx={g.setSfxOn}
+              musicOn={g.musicOn}
+              onMusic={g.setMusicOn}
+              volume={g.volume}
+              onVolume={g.setVolume}
+            />
 
             <div className="glass rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-3">
