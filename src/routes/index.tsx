@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Gamepad2, Info } from "lucide-react";
+import { Play, Pause, RotateCcw, Gamepad2, Info } from "lucide-react";
 import { useSnakeGame } from "@/hooks/useSnakeGame";
 import { GameBoard } from "@/components/snake/GameBoard";
 import { ScorePanel } from "@/components/snake/ScorePanel";
 import { TouchControls } from "@/components/snake/TouchControls";
 import { GameOverModal } from "@/components/snake/GameOverModal";
+import { SettingsPanel } from "@/components/snake/SettingsPanel";
 import type { Difficulty } from "@/lib/snake/types";
 
 export const Route = createFileRoute("/")({
