@@ -105,10 +105,10 @@ function SnakePage() {
               </button>
             </div>
 
-            {/* Touch controls on mobile */}
-            <div className="lg:hidden pt-2">
-              <TouchControls onDirection={g.changeDirection} />
-            </div>
+            {/* Swipe on the board to change direction on touch devices */}
+            <p className="lg:hidden text-center text-xs text-muted-foreground pt-1">
+              Swipe up, down, left, or right on the board to steer.
+            </p>
           </div>
 
           {/* Sidebar */}
