@@ -76,13 +76,6 @@ function SnakePage() {
               <p className="hidden sm:block text-xs text-muted-foreground">Classic snake, modern feel.</p>
             </div>
           </div>
-          <button
-            onClick={() => g.setSoundOn(!g.soundOn)}
-            aria-label={g.soundOn ? "Mute sound" : "Unmute sound"}
-            className="glass rounded-xl h-10 w-10 grid place-items-center hover:bg-primary/10 transition-colors"
-          >
-            {g.soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          </button>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
