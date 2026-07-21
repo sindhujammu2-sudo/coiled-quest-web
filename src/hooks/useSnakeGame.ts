@@ -157,14 +157,14 @@ export function useSnakeGame() {
       setScore((s) => s + 1);
       setFood(randomFood(nextSnake));
       setAteTick((t) => t + 1);
-      if (soundOnRef.current) sfx.eat();
+      if (sfxOnRef.current) sfx.eat();
     }
   }, []);
 
   const endGame = useCallback(() => {
     statusRef.current = "gameover";
     setStatus("gameover");
-    if (soundOnRef.current) sfx.gameOver();
+    if (sfxOnRef.current) sfx.gameOver();
     stopMusic();
     setScore((s) => {
       setHighScore((hi) => {
@@ -203,10 +203,10 @@ export function useSnakeGame() {
     if (status !== "countdown") return;
     if (countdown <= 0) {
       setStatus("playing");
-      if (soundOnRef.current) sfx.start();
+      if (sfxOnRef.current) sfx.start();
       return;
     }
-    if (soundOnRef.current) sfx.tick();
+    if (sfxOnRef.current) sfx.tick();
     const id = setTimeout(() => setCountdown((c) => c - 1), 800);
     return () => clearTimeout(id);
   }, [status, countdown]);
