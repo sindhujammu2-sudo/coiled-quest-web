@@ -7,17 +7,11 @@ import { ScorePanel } from "@/components/snake/ScorePanel";
 import { TouchControls } from "@/components/snake/TouchControls";
 import { GameOverModal } from "@/components/snake/GameOverModal";
 import { SettingsPanel } from "@/components/snake/SettingsPanel";
-import type { Difficulty } from "@/lib/snake/types";
 
 export const Route = createFileRoute("/")({
   component: SnakePage,
 });
 
-const DIFFICULTIES: { id: Difficulty; label: string }[] = [
-  { id: "easy", label: "Easy" },
-  { id: "medium", label: "Medium" },
-  { id: "hard", label: "Hard" },
-];
 
 function SnakePage() {
   const g = useSnakeGame();
