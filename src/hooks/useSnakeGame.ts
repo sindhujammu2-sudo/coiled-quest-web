@@ -9,9 +9,17 @@ import {
   type GameStatus,
   type Point,
 } from "@/lib/snake/types";
-import { sfx, startMusic, stopMusic } from "@/lib/snake/sounds";
+import {
+  sfx,
+  startMusic,
+  stopMusic,
+  setVolume as setAudioVolume,
+  setSfxEnabled,
+  setMusicEnabled,
+} from "@/lib/snake/sounds";
 
 const HIGH_SCORE_KEY = "snake:highScore";
+const SETTINGS_KEY = "snake:settings";
 
 function centerSnake(): Point[] {
   const c = Math.floor(BOARD_SIZE / 2);
