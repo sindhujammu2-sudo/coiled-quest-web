@@ -237,8 +237,8 @@ export function useSnakeGame() {
 
   return {
     snake, food, direction, status, score, highScore, difficulty,
-    soundOn, elapsed, countdown, ateTick,
-    setDifficulty, setSoundOn,
+    sfxOn, musicOn, volume, elapsed, countdown, ateTick,
+    setDifficulty, setSfxOn, setMusicOn, setVolume,
     start: beginCountdown, togglePause, restart, changeDirection,
   };
 }
