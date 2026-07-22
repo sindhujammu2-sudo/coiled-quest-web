@@ -167,6 +167,7 @@ export function useSnakeGame() {
     statusRef.current = "gameover";
     setStatus("gameover");
     if (sfxOnRef.current) sfx.gameOver();
+    haptics.gameOver();
     stopMusic();
     setScore((s) => {
       setHighScore((hi) => {
