@@ -159,6 +159,7 @@ export function useSnakeGame() {
       setFood(randomFood(nextSnake));
       setAteTick((t) => t + 1);
       if (sfxOnRef.current) sfx.eat();
+      haptics.eat();
     }
   }, []);
 
