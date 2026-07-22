@@ -17,6 +17,7 @@ import {
   setSfxEnabled,
   setMusicEnabled,
 } from "@/lib/snake/sounds";
+import { haptics } from "@/lib/snake/haptics";
 
 const HIGH_SCORE_KEY = "snake:highScore";
 const SETTINGS_KEY = "snake:settings";
