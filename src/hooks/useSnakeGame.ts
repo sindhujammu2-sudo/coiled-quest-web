@@ -17,6 +17,7 @@ import {
   setSfxEnabled,
   setMusicEnabled,
 } from "@/lib/snake/sounds";
+import { haptics } from "@/lib/snake/haptics";
 
 const HIGH_SCORE_KEY = "snake:highScore";
 const SETTINGS_KEY = "snake:settings";
@@ -158,6 +159,7 @@ export function useSnakeGame() {
       setFood(randomFood(nextSnake));
       setAteTick((t) => t + 1);
       if (sfxOnRef.current) sfx.eat();
+      haptics.eat();
     }
   }, []);
 
@@ -165,6 +167,7 @@ export function useSnakeGame() {
     statusRef.current = "gameover";
     setStatus("gameover");
     if (sfxOnRef.current) sfx.gameOver();
+    haptics.gameOver();
     stopMusic();
     setScore((s) => {
       setHighScore((hi) => {
@@ -212,7 +215,11 @@ export function useSnakeGame() {
   }, [status, countdown]);
 
   const togglePause = useCallback(() => {
-    setStatus((s) => (s === "playing" ? "paused" : s === "paused" ? "playing" : s));
+    setStatus((s) => {
+      if (s === "playing") { haptics.pause(); return "paused"; }
+      if (s === "paused") { haptics.pause(); return "playing"; }
+      return s;
+    });
   }, []);
 
   const restart = useCallback(() => {
