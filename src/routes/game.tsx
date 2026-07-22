@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { Play, Pause, RotateCcw, Gamepad2, Info } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo } from "react";
+import { Play, Pause, RotateCcw, Gamepad2, Info, Home } from "lucide-react";
 import { useSnakeGame } from "@/hooks/useSnakeGame";
 import { GameBoard } from "@/components/snake/GameBoard";
 import { ScorePanel } from "@/components/snake/ScorePanel";
