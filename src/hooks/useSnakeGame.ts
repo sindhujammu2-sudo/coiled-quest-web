@@ -215,7 +215,11 @@ export function useSnakeGame() {
   }, [status, countdown]);
 
   const togglePause = useCallback(() => {
-    setStatus((s) => (s === "playing" ? "paused" : s === "paused" ? "playing" : s));
+    setStatus((s) => {
+      if (s === "playing") { haptics.pause(); return "paused"; }
+      if (s === "paused") { haptics.pause(); return "playing"; }
+      return s;
+    });
   }, []);
 
   const restart = useCallback(() => {
