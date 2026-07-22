@@ -7,7 +7,7 @@ import { ScorePanel } from "@/components/snake/ScorePanel";
 import { GameOverModal } from "@/components/snake/GameOverModal";
 import { SettingsPanel } from "@/components/snake/SettingsPanel";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/game")({
   component: SnakePage,
 });
 
