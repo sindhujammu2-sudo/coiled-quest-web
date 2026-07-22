@@ -17,9 +17,17 @@ function SnakePage() {
 
   // Auto-start countdown when entering the game screen
   useEffect(() => {
-    if (g.status === "idle") g.start();
+    let shouldRestart = false;
+    try {
+      shouldRestart = sessionStorage.getItem("snake:restart") === "1";
+      if (shouldRestart) sessionStorage.removeItem("snake:restart");
+      sessionStorage.setItem("snake:started", "1");
+    } catch {}
+    if (shouldRestart) g.restart();
+    else if (g.status === "idle") g.start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
 
 
