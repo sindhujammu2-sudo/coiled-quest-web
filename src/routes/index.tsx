@@ -1,157 +1,112 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { Play, Pause, RotateCcw, Gamepad2, Info } from "lucide-react";
-import { useSnakeGame } from "@/hooks/useSnakeGame";
-import { GameBoard } from "@/components/snake/GameBoard";
-import { ScorePanel } from "@/components/snake/ScorePanel";
-import { GameOverModal } from "@/components/snake/GameOverModal";
-import { SettingsPanel } from "@/components/snake/SettingsPanel";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Play, Pause, RotateCcw, Gamepad2, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: SnakePage,
+  head: () => ({
+    meta: [
+      { title: "Neon Snake — Play the Modern Snake Game" },
+      {
+        name: "description",
+        content:
+          "Neon Snake landing page. Start a new game, view your high score, and jump into a modern take on the classic Snake game.",
+      },
+      { property: "og:title", content: "Neon Snake — Play the Modern Snake Game" },
+      {
+        property: "og:description",
+        content:
+          "Start a new game, view your high score, and jump into a modern take on the classic Snake game.",
+      },
+    ],
+  }),
+  component: LandingPage,
 });
 
+const HIGH_SCORE_KEY = "snake:highScore";
 
-function SnakePage() {
-  const g = useSnakeGame();
+function LandingPage() {
+  const navigate = useNavigate();
+  const [highScore, setHighScore] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
 
-  const overlay = useMemo(() => {
-    if (g.status === "countdown") {
-      return (
-        <div className="absolute inset-0 grid place-items-center bg-background/40 backdrop-blur-sm">
-          <div key={g.countdown} className="text-7xl sm:text-8xl font-bold text-gradient animate-countdown">
-            {g.countdown > 0 ? g.countdown : "GO"}
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(HIGH_SCORE_KEY);
+      if (v) setHighScore(parseInt(v, 10) || 0);
+      setGameStarted(sessionStorage.getItem("snake:started") === "1");
+    } catch {}
+  }, []);
+
+  const handleStart = () => {
+    try {
+      sessionStorage.setItem("snake:started", "1");
+    } catch {}
+    navigate({ to: "/game" });
+  };
+
+  const handleRestart = () => {
+    try {
+      sessionStorage.setItem("snake:started", "1");
+      sessionStorage.setItem("snake:restart", "1");
+    } catch {}
+    navigate({ to: "/game" });
+  };
+
+  return (
+    <main className="min-h-screen w-full grid place-items-center px-4 py-10">
+      <div className="w-full max-w-xl text-center animate-fade-in-up">
+        {/* Logo */}
+        <div className="mx-auto mb-6 grid h-28 w-28 sm:h-32 sm:w-32 place-items-center rounded-3xl gradient-primary glow-primary animate-countdown">
+          <Gamepad2 className="h-16 w-16 sm:h-20 sm:w-20 text-primary-foreground" />
+        </div>
+
+        {/* Title */}
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight">
+          <span className="text-gradient">Snake Game</span>
+        </h1>
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground">
+          A modern, neon take on the classic. Eat, grow, and beat your best.
+        </p>
+
+        {/* High Score */}
+        <div className="glass mx-auto mt-8 inline-flex items-center gap-3 rounded-2xl px-5 py-3">
+          <Trophy className="h-5 w-5 text-primary" />
+          <div className="text-left">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              High Score
+            </div>
+            <div className="text-2xl font-bold tabular-nums">{highScore}</div>
           </div>
         </div>
-      );
-    }
-    if (g.status === "paused") {
-      return (
-        <div className="absolute inset-0 grid place-items-center bg-background/60 backdrop-blur-md animate-fade-in-up">
-          <div className="glass rounded-2xl px-6 py-4 text-center">
-            <div className="text-2xl font-bold">Paused</div>
-            <div className="text-sm text-muted-foreground mt-1">Press P or resume to continue</div>
-          </div>
-        </div>
-      );
-    }
-    if (g.status === "idle") {
-      return (
-        <div className="absolute inset-0 grid place-items-center bg-background/50 backdrop-blur-sm">
+
+        {/* Buttons */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <button
-            onClick={g.start}
+            onClick={handleStart}
             className="inline-flex items-center gap-2 rounded-2xl gradient-primary px-6 py-3 font-semibold text-primary-foreground hover:brightness-110 transition-all active:scale-[0.98] glow-primary"
           >
-            <Play className="h-5 w-5" /> Start Game
+            <Play className="h-5 w-5" /> Start
+          </button>
+          <button
+            disabled={!gameStarted}
+            onClick={() => navigate({ to: "/game" })}
+            className="inline-flex items-center gap-2 rounded-2xl glass px-6 py-3 font-semibold hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            title={gameStarted ? "Resume / pause current game" : "Start a game first"}
+          >
+            <Pause className="h-5 w-5" /> Pause
+          </button>
+          <button
+            onClick={handleRestart}
+            className="inline-flex items-center gap-2 rounded-2xl glass px-6 py-3 font-semibold hover:bg-primary/10 transition-colors"
+          >
+            <RotateCcw className="h-5 w-5" /> Restart
           </button>
         </div>
-      );
-    }
-    if (g.status === "gameover") {
-      return <GameOverModal score={g.score} highScore={g.highScore} onPlayAgain={g.restart} />;
-    }
-    return null;
-  }, [g.status, g.countdown, g.score, g.highScore, g.start, g.restart]);
 
-  return (
-    <main className="min-h-screen w-full px-4 py-6 sm:py-10">
-      <div className="mx-auto max-w-5xl">
-        {/* Header */}
-        <header className="mb-6 flex items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl gradient-primary glow-primary">
-              <Gamepad2 className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="truncate text-xl sm:text-2xl font-bold tracking-tight">
-                <span className="text-gradient">Neon Snake</span>
-              </h1>
-              <p className="hidden sm:block text-xs text-muted-foreground">Classic snake, modern feel.</p>
-            </div>
-          </div>
-        </header>
-
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          {/* Board column */}
-          <div className="space-y-4">
-            <ScorePanel score={g.score} highScore={g.highScore} elapsed={g.elapsed} />
-            <div className="relative">
-              <GameBoard snake={g.snake} food={g.food} ateTick={g.ateTick} overlay={overlay} onSwipe={g.changeDirection} />
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {g.status === "idle" || g.status === "gameover" ? (
-                <button
-                  onClick={g.start}
-                  className="inline-flex items-center gap-2 rounded-xl gradient-primary px-4 py-2.5 font-semibold text-primary-foreground hover:brightness-110 transition-all active:scale-[0.98]"
-                >
-                  <Play className="h-4 w-4" /> Start
-                </button>
-              ) : (
-                <button
-                  onClick={g.togglePause}
-                  disabled={g.status === "countdown"}
-                  className="inline-flex items-center gap-2 rounded-xl glass px-4 py-2.5 font-semibold hover:bg-primary/10 transition-colors disabled:opacity-50"
-                >
-                  {g.status === "paused" ? <><Play className="h-4 w-4" /> Resume</> : <><Pause className="h-4 w-4" /> Pause</>}
-                </button>
-              )}
-              <button
-                onClick={g.restart}
-                className="inline-flex items-center gap-2 rounded-xl glass px-4 py-2.5 font-semibold hover:bg-primary/10 transition-colors"
-              >
-                <RotateCcw className="h-4 w-4" /> Restart
-              </button>
-            </div>
-
-            {/* Swipe on the board to change direction on touch devices */}
-            <p className="lg:hidden text-center text-xs text-muted-foreground pt-1">
-              Swipe up, down, left, or right on the board to steer.
-            </p>
-          </div>
-
-          {/* Sidebar */}
-          <aside className="space-y-4">
-            <SettingsPanel
-              difficulty={g.difficulty}
-              onDifficulty={g.setDifficulty}
-              sfxOn={g.sfxOn}
-              onSfx={g.setSfxOn}
-              musicOn={g.musicOn}
-              onMusic={g.setMusicOn}
-              volume={g.volume}
-              onVolume={g.setVolume}
-            />
-
-            <div className="glass rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Info className="h-4 w-4 text-primary" />
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">How to play</h2>
-              </div>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Kbd>↑ ↓ ← →</Kbd> or <Kbd>W A S D</Kbd> to move</li>
-                <li><Kbd>P</Kbd> to pause/resume</li>
-                <li><Kbd>R</Kbd> to restart</li>
-                <li>Eat the red dot to grow and score</li>
-                <li>Avoid walls and yourself</li>
-              </ul>
-            </div>
-          </aside>
-        </div>
-
-        <footer className="mt-10 text-center text-xs text-muted-foreground">
-          Built with React, TypeScript & Tailwind.
-        </footer>
+        <p className="mt-8 text-xs text-muted-foreground">
+          Tip: use <Link to="/game" className="text-primary hover:underline">arrow keys, WASD, or swipe</Link> to steer.
+        </p>
       </div>
     </main>
-  );
-}
-
-function Kbd({ children }: { children: React.ReactNode }) {
-  return (
-    <kbd className="inline-block rounded-md border border-border bg-secondary/60 px-1.5 py-0.5 text-[11px] font-medium text-foreground mx-0.5">
-      {children}
-    </kbd>
   );
 }
