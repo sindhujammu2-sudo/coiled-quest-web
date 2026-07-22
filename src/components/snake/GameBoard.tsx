@@ -101,41 +101,12 @@ function GameBoardImpl({ snake, food, ateTick, overlay, onSwipe }: Props) {
           padding: `${cellPct * 0.08}%`,
         }}
       >
-        <div
-          className="relative h-full w-full animate-food"
-          style={{
-            filter: "drop-shadow(0 0 6px var(--color-food)) drop-shadow(0 0 10px var(--color-food))",
-          }}
-        >
-          <svg viewBox="0 0 32 32" className="h-full w-full" aria-hidden="true">
-            <defs>
-              <radialGradient id="appleGrad" cx="0.35" cy="0.3" r="0.8">
-                <stop offset="0%" stopColor="oklch(0.9 0.18 30)" />
-                <stop offset="55%" stopColor="var(--color-food)" />
-                <stop offset="100%" stopColor="oklch(0.45 0.2 20)" />
-              </radialGradient>
-            </defs>
-            {/* Leaf */}
-            <path
-              d="M18 8c2-3 6-4 8-3 0 3-2 6-5 7-1.5.5-3 .3-4 0z"
-              fill="oklch(0.72 0.18 145)"
-              stroke="oklch(0.45 0.15 145)"
-              strokeWidth="0.6"
-              strokeLinejoin="round"
-            />
-            {/* Stem */}
-            <path d="M16 10c0-2 .6-3 1.6-4" stroke="oklch(0.35 0.08 60)" strokeWidth="1.3" strokeLinecap="round" fill="none" />
-            {/* Apple body */}
-            <path
-              d="M16 11c-4-2-9 0-9 6 0 6 4 12 9 12s9-6 9-12c0-6-5-8-9-6z"
-              fill="url(#appleGrad)"
-              stroke="oklch(0.4 0.2 25)"
-              strokeWidth="0.5"
-            />
-            {/* Highlight */}
-            <ellipse cx="12" cy="16" rx="2.2" ry="3" fill="oklch(0.97 0.06 30)" opacity="0.7" />
-          </svg>
-        </div>
+        <div className="h-full w-full rounded-full animate-food"
+             style={{
+               background: "radial-gradient(circle at 30% 30%, oklch(0.85 0.2 30), var(--color-food))",
+               boxShadow: "0 0 12px var(--color-food), inset 0 0 6px oklch(0.3 0.1 25)",
+             }}
+        />
       </div>
 
       {/* Snake */}
