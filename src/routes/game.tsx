@@ -77,6 +77,12 @@ function SnakePage() {
               <p className="hidden sm:block text-xs text-muted-foreground">Classic snake, modern feel.</p>
             </div>
           </div>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 rounded-xl glass px-3 py-2 text-sm font-semibold hover:bg-primary/10 transition-colors"
+          >
+            <Home className="h-4 w-4" /> Home
+          </Link>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
