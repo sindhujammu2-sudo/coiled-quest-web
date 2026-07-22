@@ -15,6 +15,14 @@ export const Route = createFileRoute("/game")({
 function SnakePage() {
   const g = useSnakeGame();
 
+  // Auto-start countdown when entering the game screen
+  useEffect(() => {
+    if (g.status === "idle") g.start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+
   const overlay = useMemo(() => {
     if (g.status === "countdown") {
       return (
