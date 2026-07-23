@@ -80,49 +80,49 @@ function SnakePage() {
 
       <div className="relative mx-auto max-w-6xl px-4 py-5 sm:py-8">
         {/* Top bar */}
-        <header className="glass rounded-2xl px-3 py-3 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3 flex-wrap">
+        <header className="glass rounded-2xl p-2 sm:p-3 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 sm:flex sm:gap-3">
           <Link
             to="/"
             aria-label="Home"
-            className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold hover:bg-primary/10 transition-colors"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold hover:bg-primary/10 active:scale-[0.97] transition-all"
           >
-            <Home className="h-4 w-4" />
+            <Home className="h-5 w-5" />
             <span className="hidden sm:inline">Home</span>
           </Link>
 
           <div className="hidden sm:block h-6 w-px bg-border" />
 
-          <div className="flex-1 min-w-0 flex items-center gap-2 sm:gap-3">
+          <div className="min-w-0 flex items-center justify-end gap-2 sm:flex-1 sm:justify-start sm:gap-3">
             <StatChip label="Score" value={g.score} accent />
             <StatChip label="Best" value={g.highScore} />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="col-span-2 grid grid-cols-2 gap-2 sm:col-auto sm:flex sm:items-center sm:gap-2">
             {isRunning ? (
               <button
                 onClick={g.togglePause}
                 disabled={g.status === "countdown"}
-                className="inline-flex items-center gap-2 rounded-xl gradient-primary px-3 sm:px-4 py-2 text-sm font-semibold text-primary-foreground hover:brightness-110 transition-all disabled:opacity-50"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl gradient-primary px-4 text-sm font-semibold text-primary-foreground hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-50"
               >
-                {g.status === "paused" ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-                <span className="hidden sm:inline">{g.status === "paused" ? "Resume" : "Pause"}</span>
+                {g.status === "paused" ? <Play className="h-5 w-5" /> : <Pause className="h-5 w-5" />}
+                <span>{g.status === "paused" ? "Resume" : "Pause"}</span>
               </button>
             ) : (
               <button
                 onClick={g.start}
-                className="inline-flex items-center gap-2 rounded-xl gradient-primary px-3 sm:px-4 py-2 text-sm font-semibold text-primary-foreground hover:brightness-110 transition-all"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl gradient-primary px-4 text-sm font-semibold text-primary-foreground hover:brightness-110 active:scale-[0.97] transition-all"
               >
-                <Play className="h-4 w-4" />
-                <span className="hidden sm:inline">Start</span>
+                <Play className="h-5 w-5" />
+                <span>Start</span>
               </button>
             )}
             <button
               onClick={g.restart}
               aria-label="Restart"
-              className="inline-flex items-center gap-2 rounded-xl px-3 sm:px-4 py-2 text-sm font-semibold hover:bg-primary/10 border border-border transition-colors"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold hover:bg-primary/10 active:scale-[0.97] border border-border transition-all"
             >
-              <RotateCcw className="h-4 w-4" />
-              <span className="hidden sm:inline">Restart</span>
+              <RotateCcw className="h-5 w-5" />
+              <span>Restart</span>
             </button>
           </div>
         </header>
