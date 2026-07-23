@@ -72,7 +72,7 @@ function SnakePage() {
     return null;
   }, [g.status, g.countdown, g.score, g.highScore, g.start, g.restart, navigate]);
 
-  const isRunning = g.status === "running" || g.status === "paused" || g.status === "countdown";
+  const isRunning = g.status === "playing" || g.status === "paused" || g.status === "countdown";
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden bg-orbs">
