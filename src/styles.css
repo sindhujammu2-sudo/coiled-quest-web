@@ -31,7 +31,8 @@
   --color-snake-head: var(--snake-head);
   --color-food: var(--food);
   --color-grid: var(--grid);
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Orbitron", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -72,12 +73,27 @@
     border-color: var(--color-border);
   }
   html, body {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     background: var(--gradient-bg);
     background-attachment: fixed;
     color: var(--color-foreground);
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
+  h1, h2, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+}
+
+@utility font-display { font-family: var(--font-display); }
+@utility font-body { font-family: var(--font-body); }
+
+@utility bg-orbs {
+  background-image:
+    radial-gradient(600px circle at 15% 20%, oklch(0.78 0.19 150 / 18%), transparent 60%),
+    radial-gradient(500px circle at 85% 80%, oklch(0.72 0.2 320 / 18%), transparent 60%),
+    radial-gradient(400px circle at 50% 50%, oklch(0.7 0.15 200 / 10%), transparent 70%);
 }
 
 @utility glass {
